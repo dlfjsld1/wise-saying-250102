@@ -13,7 +13,7 @@ public class TestBot {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
 
-        TestApp app = new TestApp();
+        TestApp app = new TestApp(sc);
         app.run();
 
         return out.toString();

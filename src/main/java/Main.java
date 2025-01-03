@@ -5,6 +5,15 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         test2();
+        //명언 앱이 작동하려면 아래걸 실행해야 함
+        //run();
+    }
+
+    public static void run() {
+        Scanner sc = new Scanner(System.in);
+
+        TestApp app = new TestApp(sc);
+        app.run();
     }
 
     public static void test2() {
@@ -44,7 +53,7 @@ public class Main {
 
         //테스트봇 만들기
 
-        TestApp app = new TestApp();
-        app.run();
+//        TestApp app = new TestApp();
+//        app.run();
     }
 }

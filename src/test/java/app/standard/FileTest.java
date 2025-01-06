@@ -59,9 +59,16 @@ public class FileTest {
     }
 
     @Test
-    @DisplayName("파일 생성. 내용이 없는 빈 파일 생성")
+    @DisplayName("파일 삭제")
     void t5() {
+       String file = "test3.txt";
 
+       Util.File.createFile(file);
+       assertThat(Files.exists((Paths.get(file))))
+               .isTrue();
+       Util.File.delete(file);
+       assertThat(Files.exists((Paths.get(file))))
+              .isFalse();
     }
 }
 

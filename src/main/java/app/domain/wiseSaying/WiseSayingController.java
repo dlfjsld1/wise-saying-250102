@@ -1,4 +1,4 @@
-package domain.wiseSaying;
+package app.domain.wiseSaying;
 
 import java.util.List;
 import java.util.Scanner;
@@ -33,4 +33,15 @@ public class WiseSayingController {
         });
     }
 
+    public void actionDelete(String cmd) {
+        //id=1
+        String param = cmd.split("\\?")[1];
+        String[] paramBits = param.split("=");
+        String strId = paramBits[1];
+        int id = Integer.parseInt(strId);
+        boolean result = wiseSayingService.delete(id);
+        if(!result) {
+            System.out.println("%d번 명언은 존재하지 않습니다".formatted(id));
+        }
+    }
 }

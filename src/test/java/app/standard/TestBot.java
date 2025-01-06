@@ -1,3 +1,7 @@
+package app.standard;
+
+import app.App;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -13,7 +17,7 @@ public class TestBot {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
 
-        TestApp app = new TestApp(sc);
+        App app = new App(sc);
         app.run();
 
         return out.toString();

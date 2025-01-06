@@ -1,4 +1,4 @@
-package domain.wiseSaying;
+package app.domain.wiseSaying;
 
 public class WiseSaying {
     private int id;

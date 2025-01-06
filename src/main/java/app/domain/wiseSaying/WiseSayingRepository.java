@@ -1,4 +1,4 @@
-package domain.wiseSaying;
+package app.domain.wiseSaying;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,5 +20,10 @@ public class WiseSayingRepository {
 
     public List<WiseSaying> findAll() {
         return wiseSayingList;
+    }
+
+    public boolean deleteById(int id) {
+        //removeIf 삭제 성공하면 true, 실패히면 false
+        return wiseSayingList.removeIf(w -> w.getId() == id);
     }
 }

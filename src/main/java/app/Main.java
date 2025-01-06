@@ -1,3 +1,5 @@
+package app;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -5,14 +7,12 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         test2();
-        //명언 앱이 작동하려면 아래걸 실행해야 함
-        //run();
     }
 
     public static void run() {
         Scanner sc = new Scanner(System.in);
 
-        TestApp app = new TestApp(sc);
+        App app = new App(sc);
         app.run();
     }
 
@@ -39,7 +39,7 @@ public class Main {
     public static void test1() {
         // System.in --> 표준 입력
 
-        // 1. 입력을 봇에게 맡기 수 있다.
+        // 1. 입력을 봇에게 맡길 수 있다.
         Scanner scan = new Scanner("등록\n현재를 사랑하라.\n작자미상\n");
 
         String val1 = scan.nextLine();
@@ -50,10 +50,5 @@ public class Main {
 
         String val3 = scan.nextLine();
         System.out.println(val3);
-
-        //테스트봇 만들기
-
-//        TestApp app = new TestApp();
-//        app.run();
     }
 }

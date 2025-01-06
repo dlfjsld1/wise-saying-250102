@@ -1,14 +1,11 @@
+package app.domain.wiseSaying;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.sql.SQLOutput;
-import java.util.Scanner;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FirstTest {
+public class WiseSayingControllerTest {
 
 
     @Test
@@ -19,7 +16,7 @@ public class FirstTest {
 
     @Test
     void t2() {
-//        TestApp app = new TestApp();
+//        app.TestApp app = new app.TestApp();
 //        app.run();
 
         // aaa가 출력되는가?
@@ -31,10 +28,8 @@ public class FirstTest {
 //테스트봇 선입력
         String out = TestBot.run("");
         assertThat(out)
-                .contains("명령")
+                .contains("명령 )")
                 .contains("명언앱을 종료합니다.");
-
-        assertThat(out).contains("명언앱을 종료합니다.");
     }
 
     @Test
@@ -138,5 +133,26 @@ public class FirstTest {
                 .contains("번호 / 작가 / 명언")
                 .contains("----------------------")
                 .containsSubsequence("2 / 작자미상 / 과거에 집착하지 마라.", "1 / 작자미상 / 현재를 사랑하라.");
+    }
+
+    @Test
+    @DisplayName("삭제 - id를 이용해서 해당 id의 명언을 삭제할 수 있다. 입력: 삭제?id=1")
+    void t10() {
+        String out = TestBot.run("""
+                등록
+                현재를 사랑하라.
+                작자미상
+                등록
+                과거에 집착하지 마라.
+                작자미상
+                삭제?id=1
+                목록
+                """);
+        assertThat(out)
+                //포함해야 한다
+                .contains("2 / 작자미상 / 과거에 집착하지 마라.")
+                //포함하지 말아야 한다
+                .doesNotContain("1 / 작자미상 / 현재를 사랑하라.");
+
     }
 }

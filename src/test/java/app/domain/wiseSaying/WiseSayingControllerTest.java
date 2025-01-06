@@ -156,4 +156,43 @@ public class WiseSayingControllerTest {
                 .doesNotContain("1 / 작자미상 / 현재를 사랑하라.");
 
     }
+
+    @Test
+    @DisplayName("삭제 예외 처리 - 없는 id로 삭제를 시도하면 예외처리 메시지가 나온다.")
+    void t11() {
+        String out = TestBot.run("""
+                등록
+                현재를 사랑하라.
+                작자미상
+                등록
+                과거에 집착하지 마라.
+                작자미상
+                삭제?id=1
+                삭제?id=1
+                """);
+
+        assertThat(out)
+                .contains("1번 명언은 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("수정 - id를 이용해서 해당 id의 명언을 수정할 수 있다. 이 대 기존의 명언과 작가가 나와야 함. 입력값 - 수정?id=1")
+    void t12() {
+        String out = TestBot.run("""
+                등록
+                현재를 사랑하라.
+                작자미상
+                등록
+                과거에 집착하지 마라.
+                작자미상
+                수정?id=1
+                새 명언 내용
+                새 작가
+                목록
+                """);
+
+        assertThat(out)
+                .doesNotContain("1 / 작자미상 / 현재를 사랑하라.")
+                .contains("1 / 새 작가 / 새 명언 내용");
+    }
 }

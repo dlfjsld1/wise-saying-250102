@@ -24,4 +24,16 @@ public class WiseSaying {
     public String getAuthor() {
         return author;
     }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public boolean isNew() {
+        return this.id == 0;
+    }
 }

@@ -29,6 +29,40 @@ public class FileTest {
         assertThat(Files.exists(Paths.get(file)))
                 .isTrue();
     }
+
+    @Test
+    @DisplayName("파일 내용 읽어오기")
+    void t3() {
+
+        String testContent = "Hello, world!";
+
+        String file = "test.txt";
+
+        String content = Util.File.readAsString(file);
+
+        assertThat(content)
+                .isEqualTo(testContent);
+    }
+
+    @Test
+    @DisplayName("파일 내용 수정")
+    void t4() {
+        String file = "test2.txt";
+        String writeContent = "modified content";
+
+        Util.File.write(file, "modified content");
+
+        String readContent = Util.File.readAsString(file);
+
+        assertThat(readContent)
+                .isEqualTo(writeContent);
+    }
+
+    @Test
+    @DisplayName("파일 생성. 내용이 없는 빈 파일 생성")
+    void t5() {
+
+    }
 }
 
 

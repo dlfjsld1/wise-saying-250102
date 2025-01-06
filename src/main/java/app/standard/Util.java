@@ -15,14 +15,7 @@ public class Util {
         }
 
         public static void createFile(String pathValue) {
-            Path filePath = Paths.get(pathValue);
-            try {
-                Files.createFile(filePath);
-            } catch (Exception e) {
-                System.out.println("파일 생성 중 실패");
-                //오류 내용 보여줌
-                e.printStackTrace();
-            }
+            write(pathValue, "");
         }
 
         public static String readAsString(String file) {
@@ -53,6 +46,15 @@ public class Util {
                 Files.delete(filePath);
             } catch(IOException e) {
                 System.out.println("파일 삭제 실패");
+                e.printStackTrace();
+            }
+        }
+
+        public static void createDir(String dirPath) {
+            try {
+                Files.createDirectories(Paths.get(dirPath));
+            } catch(IOException e) {
+                System.out.println("디렉토리 생성 실패");
                 e.printStackTrace();
             }
         }

@@ -1,10 +1,9 @@
 package app.standard;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 
 public class Util {
 
@@ -50,6 +49,8 @@ public class Util {
 
             Path filePath = Paths.get(file);
 
+            if(!Files.exists(filePath)) return;
+
             try {
                 Files.delete(filePath);
             } catch (IOException e) {
@@ -66,7 +67,42 @@ public class Util {
                 e.printStackTrace();
             }
         }
+
+        public static void deleteForce(String path) {
+            Path folderPath = Path.of(path);
+
+            if(!Files.exists(folderPath)) return;
+
+            try {
+                Files.walkFileTree(folderPath, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        // 파일 삭제
+                        Files.delete(file);
+                        System.out.println("파일 삭제: " + file.toString());
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        // 디렉토리 삭제 (디렉토리가 비어있을 때만 삭제 가능)
+                        Files.delete(dir);
+                        System.out.println("디렉토리 삭제: " + dir.toString());
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch(IOException e) {
+                System.out.println("파일 삭제 중 오류가 발생했습니다.");
+                e.printStackTrace();
+            }
+        }
     }
 
+    public static class Json {
+
+        public static String mapToJson(Map<String, Object> map) {
+            return "";
+        }
+    }
 
 }

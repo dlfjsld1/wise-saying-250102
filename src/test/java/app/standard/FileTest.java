@@ -33,7 +33,7 @@ public class FileTest {
     @AfterAll
     static void afterAll() {
         System.out.println("테스트 후에 한 번 실행");
-        Util.File.delete("test");
+        Util.File.deleteForce("test");
     }
 
 
@@ -87,14 +87,15 @@ public class FileTest {
     @Test
     @DisplayName("파일 삭제")
     void t5() {
-       String file = "test/test3.txt";
+        String file = "test/test3.txt";
 
-       Util.File.createFile(file);
-       assertThat(Files.exists((Paths.get(file))))
-               .isTrue();
-       Util.File.delete(file);
-       assertThat(Files.exists((Paths.get(file))))
-              .isFalse();
+        Util.File.createFile(file);
+        assertThat(Files.exists((Paths.get(file))))
+                .isTrue();
+
+        Util.File.delete(file);
+        assertThat(Files.exists((Paths.get(file))))
+                .isFalse();
     }
 
     @Test
@@ -103,7 +104,7 @@ public class FileTest {
         String dirPath = "test";
         Util.File.createDir(dirPath);
         assertThat(Files.exists(Paths.get(dirPath)))
-               .isTrue();
+                .isTrue();
 
         assertThat(Files.isDirectory(Path.of(dirPath)))
                 .isTrue();
@@ -113,7 +114,9 @@ public class FileTest {
     @DisplayName("폴더 삭제")
     void t7() {
         String dirPath = "test";
-        Util.File.delete(dirPath);
+
+        Util.File.deleteForce(dirPath);
+
         assertThat(Files.exists(Paths.get(dirPath)))
                 .isFalse();
     }
@@ -129,6 +132,19 @@ public class FileTest {
         boolean rst = Files.exists(Paths.get(path));
         assertThat(rst)
                 .isTrue();
+    }
+
+    @Test
+    @DisplayName("파일 삭제 -> 폴더가 비어있지 않을 때 안의 내용까지 같이 삭제")
+    void t9() {
+        String path = "test/test2/test.txt";
+
+        Util.File.deleteForce(path); // 강제 삭제
+        Util.File.delete(path); // 일반 삭제
+
+        boolean rst = Files.exists(Paths.get(path));
+        assertThat(rst)
+                .isFalse();
     }
 }
 

@@ -1,5 +1,7 @@
 package app.standard;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,9 +19,22 @@ public class FileTest {
 
     //2. 폴더 삭제
 
-    //테스트 시작 전에 test 폴더 생성
+    //3. 테스트 시작 전에 test 폴더 생성
+    //테스트 전처리
 
-    //테스트 종료 후에 test 폴더 삭제
+    @BeforeAll
+    static void beforeAll() {
+        System.out.println("테스트 전에 한 번 실행");
+        Util.File.createDir("test");
+    }
+
+    //4. 테스트 종료 후에 test 폴더 삭제
+    //테스트 후처리
+    @AfterAll
+    static void afterAll() {
+        System.out.println("테스트 후에 한 번 실행");
+        Util.File.delete("test");
+    }
 
 
     @Test
@@ -92,7 +107,28 @@ public class FileTest {
 
         assertThat(Files.isDirectory(Path.of(dirPath)))
                 .isTrue();
+    }
 
+    @Test
+    @DisplayName("폴더 삭제")
+    void t7() {
+        String dirPath = "test";
+        Util.File.delete(dirPath);
+        assertThat(Files.exists(Paths.get(dirPath)))
+                .isFalse();
+    }
+
+    @Test
+    @DisplayName("파일 생성 -> 없는 폴더에 생성 시도하면 폴더를 생성한 후에 파일 생성")
+    void t8() {
+        String path = "test/test2/test.txt";
+
+        Util.File.createFile(path);
+
+
+        boolean rst = Files.exists(Paths.get(path));
+        assertThat(rst)
+                .isTrue();
     }
 }
 

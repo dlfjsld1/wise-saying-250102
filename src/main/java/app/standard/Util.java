@@ -32,6 +32,12 @@ public class Util {
 
         public static void write(String file, String content) {
             Path filePath = Paths.get(file);
+
+            //폴더 없으면 폴더 생성
+            if(filePath.getParent() != null) {
+                createDir(filePath.getParent().toString());
+            }
+
             try {
                 Files.writeString(filePath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             } catch(IOException e) {
@@ -41,10 +47,12 @@ public class Util {
         }
 
         public static void delete(String file) {
+
             Path filePath = Paths.get(file);
+
             try {
                 Files.delete(filePath);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 System.out.println("파일 삭제 실패");
                 e.printStackTrace();
             }

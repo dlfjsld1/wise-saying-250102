@@ -150,6 +150,15 @@ public class Util {
             String jsonStr = mapToJson(map);
             File.write(filePath, jsonStr);
         }
+
+        public static Map<String, Object> readAsMap(String filePath) {
+            String jsonStr = File.readAsString(filePath);
+            return null;
+        }
+
+        public static Map<String, Object> jsonToMap(String jsonStr) {
+            return null;
+        }
     }
 
 }

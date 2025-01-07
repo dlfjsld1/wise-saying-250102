@@ -3,6 +3,8 @@ package app.standard;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -153,11 +155,38 @@ public class Util {
 
         public static Map<String, Object> readAsMap(String filePath) {
             String jsonStr = File.readAsString(filePath);
-            return null;
+            return jsonToMap(jsonStr);
         }
 
         public static Map<String, Object> jsonToMap(String jsonStr) {
-            return null;
+            Map<String, Object> resultMap = new LinkedHashMap<>();
+            jsonStr = jsonStr.replaceAll("\\{", "")
+                    .replaceAll("}", "")
+                    .replaceAll("\n", "");
+
+            Arrays.stream(jsonStr.split(","))
+                    .map(p -> p.trim().split(" : "))
+                    .forEach(p -> {
+                        String key = p[0].replaceAll("\"", "");
+                        String value = p[1];
+
+                        if (value.startsWith("\"")) {
+                            //문자열
+                            resultMap.put(key, value.replaceAll("\"", ""));
+                        } else if(value.contains(".")) {
+                            //실수
+                            resultMap.put(key, Double.parseDouble(value));
+                        } else if(value.equals("true") || value.equals("false")) {
+                            //논리값
+                            resultMap.put(key, Boolean.parseBoolean(value));
+                        } else {
+                            //정수
+                            resultMap.put(key, Integer.parseInt(value));
+                        }
+                    });
+
+
+            return resultMap;
         }
     }
 

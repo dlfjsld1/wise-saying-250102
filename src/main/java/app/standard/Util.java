@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Util {
 
@@ -102,14 +103,52 @@ public class Util {
 
         public static String mapToJson(Map<String, Object> map) {
 
-            String tmp = "";
-            for(String key : map.keySet()) {
-                String value = (String)map.get(key);
-                tmp = "{\n" + "    \"%s\" : " + "\"%s\"" + "\n}";
-                tmp = tmp.formatted(key, value);
-            }
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.append("{\n");
 
-            return tmp;
+            //스트림 이용해서 선언형 처리
+
+            String str = map.keySet().stream()
+                    .map(k -> map.get(k) instanceof String
+                            ? "    \"%s\" : \"%s\"".formatted(k, map.get(k))
+                            : "    \"%s\" : %s".formatted(k, map.get(k))
+                    ).collect(Collectors.joining(",\n"));
+            jsonBuilder.append(str);
+
+//            int i = 0;
+//            for(String key : map.keySet()) {
+//
+//                //숫자 타입, 문자 타입
+//
+//
+//
+//                Object obj = map.get(key);
+//
+//                //오브젝트의 실제 타입 밝힌다
+//                if(obj instanceof String) {
+//                    String value = (String)map.get(key);
+//                    String tmp = "    \"%s\" : " + "\"%s\"";
+//                    jsonBuilder.append(tmp.formatted(key, value));
+//                } else if(obj instanceof Integer) {
+//                    int value = (int)map.get(key);
+//                    String tmp = "    \"%s\" : " + "%d";
+//                    jsonBuilder.append(tmp.formatted(key, value));
+//                }
+//
+//                if(i == map.size() - 1) {
+//                    break;
+//                }
+//
+//                jsonBuilder.append(",\n");
+//                i++;
+//            }
+            jsonBuilder.append("\n}");
+            return jsonBuilder.toString();
+        }
+
+        public static void writeAsMap(String filePath, Map<String, Object> map) {
+            String jsonStr = mapToJson(map);
+            File.write(filePath, jsonStr);
         }
     }
 

@@ -34,7 +34,9 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
         Util.Json.writeAsMap(getFilePath(wiseSaying.getId()), wiseSaying.toMap());
 
         //최신 아이디를 갱신
-        setLastId(wiseSaying.getId());
+        if(wiseSaying.isNew()) {
+            setLastId(wiseSaying.getId());
+        }
 
         return wiseSaying;
     }

@@ -12,4 +12,5 @@ public interface WiseSayingRepository {
     Optional<WiseSaying> findById(int id);
     void build();
     void makeSampleData(int cnt);
+    int count();
 }

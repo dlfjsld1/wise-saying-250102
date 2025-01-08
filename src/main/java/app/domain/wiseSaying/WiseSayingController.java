@@ -29,6 +29,10 @@ public class WiseSayingController {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
 
+        //목록?page=1
+        int page = command.getParamAsInt("page", 1);
+
+
         List<WiseSaying> wiseSayingList;
 
         //검색명령어가 포함됐는지 확인
@@ -52,11 +56,34 @@ public class WiseSayingController {
         wiseSayingList.reversed().forEach(w -> {
             System.out.printf("%d / %s / %s\n", w.getId(), w.getAuthor(), w.getContent());
         });
+
+        printPage(page);
+    }
+
+    private void printPage(int page) {
+
+        int totalItems = wiseSayingService.count();
+        int itemsPerPage = 5;
+        int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+
+        for(int i = 1; i <= totalPages; i++) {
+            if(i == page) {
+                System.out.print("[%d]".formatted(i));
+            } else {
+                System.out.print("%d".formatted(i));
+            }
+
+            if(i == totalPages) {
+                System.out.println();
+                break;
+            }
+            System.out.print(" / ");
+        }
     }
 
     public void actionDelete(Command cmd) {
         //id=1
-        int id = cmd.getParamAsInt("id");
+        int id = cmd.getParamAsInt("id", -1);
         boolean result = wiseSayingService.delete(id);
         if(!result) {
             System.out.println("%d번 명언은 존재하지 않습니다.".formatted(id));
@@ -64,7 +91,7 @@ public class WiseSayingController {
     }
 
     public void actionModify(Command cmd) {
-        int id = cmd.getParamAsInt("id");
+        int id = cmd.getParamAsInt("id", -1);
         Optional<WiseSaying> opWiseSaying = wiseSayingService.getItem(id);
         WiseSaying wiseSaying = opWiseSaying.orElse(null);
         if (wiseSaying == null) {

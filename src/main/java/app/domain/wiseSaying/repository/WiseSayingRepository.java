@@ -11,4 +11,5 @@ public interface WiseSayingRepository {
     boolean deleteById(int id);
     Optional<WiseSaying> findById(int id);
     void build();
+    void makeSampleData(int cnt);
 }

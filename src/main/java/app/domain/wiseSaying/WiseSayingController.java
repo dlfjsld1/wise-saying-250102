@@ -25,11 +25,24 @@ public class WiseSayingController {
         System.out.println("%d번 명언이 등록되었습니다.".formatted(wiseSaying.getId()));
     }
 
-    public void actionPrint() {
+    public void actionPrint(Command command) {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
 
-        List<WiseSaying> wiseSayingList = wiseSayingService.getAllItems();
+        List<WiseSaying> wiseSayingList;
+
+        //검색명령어가 포함됐는지 확인
+        if(command.isSearchCommand()) {
+
+            String ktype = command.getParam("keywordType");
+            String kw = command.getParam("keyword");
+
+            wiseSayingList = wiseSayingService.search(ktype, kw);
+        } else {
+            wiseSayingList = wiseSayingService.getAllItems();
+
+        }
+
 
         if(wiseSayingList.isEmpty()) {
             System.out.println("등록된 명언이 없습니다.");
@@ -74,5 +87,10 @@ public class WiseSayingController {
     public void actionBuild() {
         wiseSayingService.build();
         System.out.println("data.json 파일의 내용이 갱신되었습니다.");
+    }
+
+    public void makeSampleData(int cnt) {
+        wiseSayingService.makeSampleData(cnt);
+        System.out.println("샘플 데이터가 생성되었습니다.");
     }
 }

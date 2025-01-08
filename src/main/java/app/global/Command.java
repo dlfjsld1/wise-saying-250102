@@ -53,4 +53,8 @@ public class Command {
             return 0;
         }
     }
+
+    public boolean isSearchCommand() {
+        return getParam("keywordType") != null || getParam("keyword") != null;
+    }
 }

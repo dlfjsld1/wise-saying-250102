@@ -237,8 +237,57 @@ public class WiseSayingControllerTest {
                 """);
 
         boolean rst = Util.File.exists(WiseSayingFileRepository.getBuildPath());
-
         assertThat(rst)
                 .isTrue();
+    }
+
+    @Test
+    @DisplayName("검색 - 검색 타입과 키워드를 입력받아 키워드를 포함하는 명령을 출력한다.")
+    void t15() {
+        String out = TestBot.run("""
+                등록
+                현재를 사랑하라.
+                작자미상
+                등록
+                과거에 집착하지 마라.
+                작자미상
+                목록?keywordType=content&keyword=과거
+                """);
+
+        assertThat(out)
+                .contains("2 / 작자미상 / 과거에 집착하지 마라.")
+                .doesNotContain("1 / 작자미상 / 현재를 사랑하라.");
+
+    }
+
+    @Test
+    @DisplayName("페이징")
+    void t16() {
+
+        TestBot.makeSample(10);
+
+        String out = TestBot.run("""
+                목록
+                """);
+
+        assertThat(out)
+                .contains("1 / 작가1 / 명언1")
+                .contains("10 / 작가10 / 명언10");
+
+    }
+
+    @Test
+    @DisplayName("페이징 - 페이징 UI 출력")
+    void t17() {
+
+        TestBot.makeSample(10);
+
+        String out = TestBot.run("""
+                목록
+                """);
+
+        assertThat(out)
+                .contains("[1] / 2");
+
     }
 }

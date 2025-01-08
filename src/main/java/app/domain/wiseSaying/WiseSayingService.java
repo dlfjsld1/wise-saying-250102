@@ -2,7 +2,7 @@ package app.domain.wiseSaying;
 
 import app.domain.wiseSaying.repository.RepositoryProvider;
 import app.domain.wiseSaying.repository.WiseSayingFileRepository;
-import app.domain.wiseSaying.repository.WiseSayingMemRepository;
+//import app.domain.wiseSaying.repository.WiseSayingMemRepository;
 import app.domain.wiseSaying.repository.WiseSayingRepository;
 
 import java.util.List;
@@ -39,7 +39,21 @@ public class WiseSayingService {
         wiseSayingRepository.save(wiseSaying);
     }
 
-    public void build() {
-        wiseSayingRepository.build();
+    public void build() { wiseSayingRepository.build(); }
+
+    public List<WiseSaying> search(String ktype, String kw) {
+        return wiseSayingRepository.findAll().stream()
+                .filter(w -> {
+                    if(ktype.equals("content")) {
+                        return w.getContent().contains(kw);
+                    } else {
+                        return w.getAuthor().contains(kw);
+                    }
+                })
+                .toList();
+    }
+
+    public void makeSampleData(int cnt) {
+        wiseSayingRepository.makeSampleData(cnt);
     }
 }

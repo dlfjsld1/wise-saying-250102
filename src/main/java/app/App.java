@@ -31,7 +31,7 @@ public class App {
             switch(actionName) {
                 case "종료" -> systemController.exit();
                 case "등록" -> wiseSayingController.actionWrite();
-                case "목록" -> wiseSayingController.actionPrint();
+                case "목록" -> wiseSayingController.actionPrint(command);
                 case "삭제" -> wiseSayingController.actionDelete(command);
                 case "수정" -> wiseSayingController.actionModify(command);
                 case "빌드" -> wiseSayingController.actionBuild();
@@ -39,5 +39,9 @@ public class App {
             }
             if(cmd.equals("종료")) break;
         }
+
+    }
+    public void makeSampleData(int cnt) {
+        wiseSayingController.makeSampleData(cnt);
     }
 }

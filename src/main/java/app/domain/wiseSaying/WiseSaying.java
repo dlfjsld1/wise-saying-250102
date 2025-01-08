@@ -1,8 +1,6 @@
 package app.domain.wiseSaying;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -10,6 +8,8 @@ import java.util.Map;
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class WiseSaying {
     private int id;
     private String content;
@@ -34,9 +34,11 @@ public class WiseSaying {
     }
 
     public static WiseSaying fromMap(Map<String, Object> map) {
+
         int id = (int)map.get("id");
-        String content = (String)map.get("content");
-        String author = (String)map.get("author");
+        String content = (String) map.get("content");
+        String author = (String) map.get("author");
+
         return new WiseSaying(id, content, author);
     }
 }

@@ -5,6 +5,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -48,17 +49,19 @@ public class Util {
             }
         }
 
-        public static void delete(String file) {
+        public static boolean delete(String file) {
 
             Path filePath = Paths.get(file);
 
-            if(!Files.exists(filePath)) return;
+            if(!Files.exists(filePath)) return false;
 
             try {
                 Files.delete(filePath);
+                return true;
             } catch (IOException e) {
                 System.out.println("파일 삭제 실패");
                 e.printStackTrace();
+                return false;
             }
         }
 
@@ -98,6 +101,22 @@ public class Util {
                 System.out.println("파일 삭제 중 오류가 발생했습니다.");
                 e.printStackTrace();
             }
+        }
+
+        public static List<Path> getPaths(String dirPathStr) {
+
+            Path dirPath = Paths.get(dirPathStr);
+
+            try{
+              return Files.walk(dirPath)
+                      .filter(Files::isRegularFile)
+                      .toList();
+            } catch(Exception e) {
+                System.out.println("파일 목록 가져오기");
+                e.printStackTrace();
+            }
+
+            return List.of();
         }
     }
 
@@ -148,8 +167,8 @@ public class Util {
             return jsonBuilder.toString();
         }
 
-        public static void writeAsMap(String filePath, Map<String, Object> map) {
-            String jsonStr = mapToJson(map);
+        public static void writeAsMap(String filePath, Map<String, Object> wiseSayingMap) {
+            String jsonStr = mapToJson(wiseSayingMap);
             File.write(filePath, jsonStr);
         }
 
@@ -159,32 +178,30 @@ public class Util {
         }
 
         public static Map<String, Object> jsonToMap(String jsonStr) {
+
             Map<String, Object> resultMap = new LinkedHashMap<>();
+
             jsonStr = jsonStr.replaceAll("\\{", "")
                     .replaceAll("}", "")
-                    .replaceAll("\n", "");
+                    .replaceAll("\n", "")
+                    .replaceAll(" : ", ":");
 
             Arrays.stream(jsonStr.split(","))
-                    .map(p -> p.trim().split(" : "))
+                    .map(p -> p.trim().split(":"))
                     .forEach(p -> {
                         String key = p[0].replaceAll("\"", "");
                         String value = p[1];
 
-                        if (value.startsWith("\"")) {
-                            //문자열
+                        if(value.startsWith("\"")) {
                             resultMap.put(key, value.replaceAll("\"", ""));
                         } else if(value.contains(".")) {
-                            //실수
                             resultMap.put(key, Double.parseDouble(value));
                         } else if(value.equals("true") || value.equals("false")) {
-                            //논리값
                             resultMap.put(key, Boolean.parseBoolean(value));
                         } else {
-                            //정수
                             resultMap.put(key, Integer.parseInt(value));
                         }
                     });
-
 
             return resultMap;
         }

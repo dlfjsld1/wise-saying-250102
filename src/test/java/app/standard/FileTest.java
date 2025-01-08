@@ -1,16 +1,14 @@
 package app.standard;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileTest {
 
@@ -22,17 +20,17 @@ public class FileTest {
     //3. 테스트 시작 전에 test 폴더 생성
     //테스트 전처리
 
-    @BeforeAll
-    static void beforeAll() {
-        System.out.println("테스트 전에 한 번 실행");
+    @BeforeEach
+    void beforeEach() {
+        System.out.println("각 테스트 전에 한 번 실행");
         Util.File.createDir("test");
     }
 
     //4. 테스트 종료 후에 test 폴더 삭제
     //테스트 후처리
-    @AfterAll
-    static void afterAll() {
-        System.out.println("테스트 후에 한 번 실행");
+    @AfterEach
+    void afterEach() {
+        System.out.println("각 테스트 후에 한 번 실행");
         Util.File.deleteForce("test");
     }
 
@@ -145,6 +143,33 @@ public class FileTest {
         boolean rst = Files.exists(Paths.get(path));
         assertThat(rst)
                 .isFalse();
+    }
+
+    @Test
+    @DisplayName("특정 폴더의 파일 목록을 가져오기")
+    void t10() {
+        String path1 = "test/test1.txt";
+        String path2 = "test/test2.txt";
+        String path3 = "test/test3.txt";
+
+        Util.File.write(path1, "test1");
+        Util.File.write(path2, "test2");
+        Util.File.write(path3, "test3");
+
+        assertThat(Files.exists(Path.of(path1)))
+                .isTrue();
+        assertThat(Files.exists(Path.of(path2)))
+                .isTrue();
+        assertThat(Files.exists(Path.of(path3)))
+                .isTrue();
+
+        List<Path> paths = Util.File.getPaths("test");
+
+        assertThat(paths)
+                .hasSize(3)
+                .contains(Path.of(path1))
+                .contains(Path.of(path2))
+                .contains(Path.of(path3));
     }
 }
 

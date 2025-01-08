@@ -38,4 +38,8 @@ public class WiseSayingService {
 
         wiseSayingRepository.save(wiseSaying);
     }
+
+    public void build() {
+        wiseSayingRepository.build();
+    }
 }

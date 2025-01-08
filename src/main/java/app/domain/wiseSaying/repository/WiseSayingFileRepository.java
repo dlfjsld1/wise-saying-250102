@@ -13,6 +13,7 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
 
     private static final String DB_PATH = AppConfig.getDbPath() + "/wiseSaying";
     private static final String ID_File_Path = DB_PATH + "/lastId.txt";
+    private static final String BUILD_Path = DB_PATH + "/build/data.json";
 
     public WiseSayingFileRepository() {
         System.out.println("파일 DB 사용");
@@ -95,5 +96,19 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
 
     public void setLastId(int id) {
         Util.File.write(ID_File_Path, id);
+    }
+
+    public void build() {
+
+        List<Map<String, Object>> mapList = findAll().stream()
+                    .map(WiseSaying::toMap)
+                    .toList();
+
+        String jsonStr = Util.Json.listToJson(mapList);
+        Util.File.write(BUILD_Path, jsonStr);
+    }
+
+    public static String getBuildPath() {
+        return BUILD_Path;
     }
 }

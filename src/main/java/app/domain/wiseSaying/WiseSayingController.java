@@ -31,6 +31,11 @@ public class WiseSayingController {
 
         List<WiseSaying> wiseSayingList = wiseSayingService.getAllItems();
 
+        if(wiseSayingList.isEmpty()) {
+            System.out.println("등록된 명언이 없습니다.");
+            return;
+        }
+
         wiseSayingList.reversed().forEach(w -> {
             System.out.printf("%d / %s / %s\n", w.getId(), w.getAuthor(), w.getContent());
         });

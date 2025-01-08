@@ -3,8 +3,11 @@ package app.global;
 public class AppConfig {
     private static String mode;
 
+    private static String dbMode;
+
     static {
         setDevMode();
+        setFileDbMode();
     }
 
     public static void setProdMode() {
@@ -29,6 +32,22 @@ public class AppConfig {
 
     public static boolean isTest() {
         return mode.equals("test");
+    }
+
+    public static void setFileDbMode() {
+        dbMode = "file";
+    }
+
+    public static void setMemDbMode() {
+        dbMode = "mem";
+    }
+
+    public static boolean isFileDb() {
+        return dbMode.equals("file");
+    }
+
+    public static boolean isMemDb() {
+        return dbMode.equals("mem");
     }
 
     public static String getDbPath() {

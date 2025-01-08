@@ -33,6 +33,10 @@ public class Util {
             return "";
         }
 
+        //숫자일 때 문자로 바꿔서 write를 부르는 메소드 오버로딩
+        public static void write(String file, int content) {
+            write(file, String.valueOf(content));
+        }
         public static void write(String file, String content) {
             Path filePath = Paths.get(file);
 
@@ -117,6 +121,10 @@ public class Util {
             }
 
             return List.of();
+        }
+
+        public static boolean exists(String filePath) {
+            return Files.exists(Path.of(filePath));
         }
     }
 

@@ -1,8 +1,11 @@
 package app.global;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter()
 public class Command {
     //1. 액션 네임 제공
     //2. id 파라미터 제공
@@ -35,9 +38,6 @@ public class Command {
         //목록?   key1=val1    &   key?=val2
         //split의 두 번째 매개변수는 몇 개까지 쪼개냐임
 
-    }
-    public String getActionName() {
-        return actionName;
     }
 
     public String getParam(String key) {

@@ -1,24 +1,28 @@
 package app.domain.wiseSaying;
 
+import app.global.AppConfig;
 import app.standard.TestBot;
 import app.standard.Util;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class WiseSayingControllerTest {
 
+    //테스트 시작 시 DB모드 변경
+    @BeforeAll()
+    static void beforeAll() {
+        AppConfig.setTestMode();
+    }
+
     @BeforeEach
     void beforeEach() {
-        Util.File.deleteForce("db/test");
+        Util.File.deleteForce(AppConfig.getDbPath());
     }
 
     @AfterEach
     void afterEach() {
-        Util.File.deleteForce("db/test");
+        Util.File.deleteForce(AppConfig.getDbPath());
     }
 
     @Test

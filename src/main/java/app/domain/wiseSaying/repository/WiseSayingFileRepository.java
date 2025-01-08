@@ -1,6 +1,7 @@
 package app.domain.wiseSaying.repository;
 
 import app.domain.wiseSaying.WiseSaying;
+import app.global.AppConfig;
 import app.standard.Util;
 
 import java.nio.file.Path;
@@ -10,31 +11,36 @@ import java.util.Optional;
 
 public class WiseSayingFileRepository implements WiseSayingRepository {
 
-    private static final String DB_PATH = "db/test/wiseSaying/";
+    private static final String DB_PATH = AppConfig.getDbPath();
+    private static final String ID_File_Path = DB_PATH + "/lastId.txt";
 
     public WiseSayingFileRepository() {
         System.out.println("파일 DB 사용");
-        lastIdInit();
+        init();
     }
 
-    public void lastIdInit() {
-        if(!Util.File.exists(DB_PATH + "lastId.txt")) {
-            Util.File.createFile(DB_PATH + "lastId.txt");
+    public void init() {
+        if(!Util.File.exists(ID_File_Path)) {
+            Util.File.createFile(ID_File_Path);
+        }
+        if(!Util.File.exists(DB_PATH)) {
+            Util.File.createFile(DB_PATH);
         }
     }
 
     public WiseSaying save(WiseSaying wiseSaying) {
         // 파일 저장
 
+        boolean isNew = wiseSaying.isNew();
         //수정과 등록을 이 한 메서드로 처리하기에 아래 조건문이 없으면 문제가 생긴다
-        if(wiseSaying.isNew()) {
+        if(isNew) {
             wiseSaying.setId(getLastId() + 1);
         }
 
         Util.Json.writeAsMap(getFilePath(wiseSaying.getId()), wiseSaying.toMap());
 
         //최신 아이디를 갱신
-        if(wiseSaying.isNew()) {
+        if(isNew) {
             setLastId(wiseSaying.getId());
         }
 
@@ -71,12 +77,12 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
 
     }
 
-    private String getFilePath(int id) {
-        return DB_PATH + id + ".json";
+    static String getFilePath(int id) {
+        return DB_PATH + "/" + id + ".json";
     }
 
     public int getLastId() {
-        String idStr = Util.File.readAsString(DB_PATH + "lastId.txt");
+        String idStr = Util.File.readAsString(ID_File_Path);
         if (idStr.isEmpty()) {
             return 0;
         }
@@ -88,6 +94,6 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
     }
 
     public void setLastId(int id) {
-        Util.File.write(DB_PATH + "lastId.txt", id);
+        Util.File.write(ID_File_Path, id);
     }
 }

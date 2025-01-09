@@ -9,9 +9,11 @@ import java.util.Scanner;
 public class WiseSayingController {
     private final Scanner sc;
     private WiseSayingService wiseSayingService;
+    private int itemPerPage;
 
     public WiseSayingController(Scanner sc) {
         this.sc = sc;
+        itemPerPage = 5;
         wiseSayingService = new WiseSayingService();
     }
 
@@ -35,15 +37,17 @@ public class WiseSayingController {
 
         List<WiseSaying> wiseSayingList;
 
+        Page pageContent = wiseSayingService.getAllItems(itemPerPage);
+
         //검색명령어가 포함됐는지 확인
         if(command.isSearchCommand()) {
 
             String ktype = command.getParam("keywordType");
             String kw = command.getParam("keyword");
 
-            wiseSayingList = wiseSayingService.search(ktype, kw);
+            wiseSayingList = wiseSayingService.search(ktype, kw, itemPerPage);
         } else {
-            wiseSayingList = wiseSayingService.getAllItems();
+            wiseSayingList = pageContent.getWiseSayings();
 
         }
 
@@ -57,14 +61,10 @@ public class WiseSayingController {
             System.out.printf("%d / %s / %s\n", w.getId(), w.getAuthor(), w.getContent());
         });
 
-        printPage(page);
+        printPage(page, pageContent.getTotalPages());
     }
 
-    private void printPage(int page) {
-
-        int totalItems = wiseSayingService.count();
-        int itemsPerPage = 5;
-        int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+    private void printPage(int page, int totalPages) {
 
         for(int i = 1; i <= totalPages; i++) {
             if(i == page) {

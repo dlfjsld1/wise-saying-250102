@@ -1,5 +1,6 @@
 package app.domain.wiseSaying.repository;
 
+import app.domain.wiseSaying.Page;
 import app.domain.wiseSaying.WiseSaying;
 import app.global.AppConfig;
 import app.standard.Util;
@@ -48,18 +49,19 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
         return wiseSaying;
     }
 
-    public List<WiseSaying> findAll() {
-        //명언들은 파일로 파편화 되어 있다.
-        //파일들을 모두 가져와야 한다.
-        //하나씩 읽어서 list로 반환한다.
-
-        //Path -> String -> Map -> WiseSaying
+    List<WiseSaying> findAll() {
         return Util.File.getPaths(DB_PATH).stream()
                 .map(Path::toString)
                 .filter(path -> path.endsWith(".json"))
                 .map(Util.Json::readAsMap)
                 .map(WiseSaying::fromMap)
                 .toList();
+
+    }
+
+    public Page findAll(int itemsPerPage) {
+        List<WiseSaying> wiseSayings = findAll();
+        return new Page(wiseSayings, wiseSayings.size(), itemsPerPage);
     }
 
     public boolean deleteById(int id) {

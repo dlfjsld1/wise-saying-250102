@@ -20,8 +20,8 @@ public class WiseSayingService {
         return wiseSayingRepository.save(wiseSaying);
     }
 
-    public List<WiseSaying> getAllItems() {
-        return wiseSayingRepository.findAll();
+    public Page getAllItems(int itemsPerPage) {
+        return wiseSayingRepository.findAll(itemsPerPage);
     }
 
     public boolean delete(int id) {
@@ -41,8 +41,8 @@ public class WiseSayingService {
 
     public void build() { wiseSayingRepository.build(); }
 
-    public List<WiseSaying> search(String ktype, String kw) {
-        return wiseSayingRepository.findAll().stream()
+    public List<WiseSaying> search(String ktype, String kw, int itemsPerPage) {
+        return wiseSayingRepository.findAll(itemsPerPage).getWiseSayings().stream()
                 .filter(w -> {
                     if(ktype.equals("content")) {
                         return w.getContent().contains(kw);

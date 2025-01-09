@@ -304,4 +304,22 @@ public class WiseSayingControllerTest {
         assertThat(out)
                 .contains("1 / 2 / 3 / [4] / 5 / 6");
     }
+
+    @Test
+    @DisplayName("페이징 - 실제 페이지에 맞는 데이터 가져오기")
+    void t19() {
+
+        TestBot.makeSample(15);
+
+        String out = TestBot.run("""
+                목록?keywordType=content&keyword=1
+                """);
+
+        assertThat(out)
+                .containsSubsequence("15 / 작가15 / 명언15", "14 / 작가14, 명언14")
+                        .doesNotContain("10 / 작가10 / 명언10");
+
+        assertThat(out)
+                .contains("[1] / 7");
+    }
 }

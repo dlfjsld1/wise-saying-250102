@@ -1,5 +1,8 @@
 package app.standard;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -228,6 +231,14 @@ public class Util {
         }
 
 
+    }
+
+    public static class Mapper {
+        public static <T> T mapToObj(Map<String, Object> map, Class<T> cls) {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            return mapper.convertValue(map, cls);
+        }
     }
 
 }

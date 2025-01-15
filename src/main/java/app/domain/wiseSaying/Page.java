@@ -4,15 +4,16 @@ import lombok.Getter;
 
 import java.util.List;
 @AllArgsConstructor
-public class Page {
-
+public class Page<T> {
     @Getter
-    public List<WiseSaying> wiseSayings;
+    private List<T> content;
     @Getter
-    public int totalItems;
-    public int itemPerPage;
+    private int totalItems;
+    private int itemsPerPage;
+    @Getter
+    private int page;
 
     public int getTotalPages() {
-        return (int) Math.ceil((double) wiseSayings.size() / itemPerPage);
+        return (int) Math.ceil((double) totalItems / itemsPerPage);
     }
 }

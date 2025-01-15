@@ -2,19 +2,20 @@ package app.domain.wiseSaying.repository;
 
 import app.domain.wiseSaying.Page;
 import app.domain.wiseSaying.WiseSaying;
+import app.domain.wiseSaying.WiseSayingService;
 import app.global.AppConfig;
 import app.standard.Util;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class WiseSayingFileRepository implements WiseSayingRepository {
 
     private static final String DB_PATH = AppConfig.getDbPath() + "/wiseSaying";
-    private static final String ID_File_Path = DB_PATH + "/lastId.txt";
-    private static final String BUILD_Path = DB_PATH + "/build/data.json";
+    private static final String ID_FILE_PATH = DB_PATH + "/lastId.txt";
+    private static final String BUILD_PATH = DB_PATH + "/build/data.json";
 
     public WiseSayingFileRepository() {
         System.out.println("파일 DB 사용");
@@ -22,31 +23,54 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
     }
 
     public void init() {
-        if(!Util.File.exists(ID_File_Path)) {
-            Util.File.createFile(ID_File_Path);
+        if (!Util.File.exists(ID_FILE_PATH)) {
+            Util.File.createFile(ID_FILE_PATH);
         }
-        if(!Util.File.exists(DB_PATH)) {
-            Util.File.createFile(DB_PATH);
+
+        if (!Util.File.exists(DB_PATH)) {
+            Util.File.createDir(DB_PATH);
         }
     }
 
     public WiseSaying save(WiseSaying wiseSaying) {
-        // 파일 저장
 
         boolean isNew = wiseSaying.isNew();
-        //수정과 등록을 이 한 메서드로 처리하기에 아래 조건문이 없으면 문제가 생긴다
-        if(isNew) {
+
+        if (isNew) {
             wiseSaying.setId(getLastId() + 1);
         }
 
         Util.Json.writeAsMap(getFilePath(wiseSaying.getId()), wiseSaying.toMap());
 
-        //최신 아이디를 갱신
-        if(isNew) {
+        if (isNew) {
             setLastId(wiseSaying.getId());
         }
 
         return wiseSaying;
+    }
+
+    public Page<WiseSaying> findByKeyword(String ktype, String kw, int itemsPerPage, int page) {
+
+        List<WiseSaying> searchedWiseSayings = findAll().stream()
+                .filter(w -> {
+                    if (ktype.equals("content")) {
+                        return w.getContent().contains(kw);
+                    } else {
+                        return w.getAuthor().contains(kw);
+                    }
+                })
+                .sorted(Comparator.comparing(WiseSaying::getId).reversed()) // 기본은 오름차순. 내림차순
+                .toList();
+
+        return pageOf(searchedWiseSayings, itemsPerPage, page);
+    }
+
+    public Page<WiseSaying> findAll(int itemsPerPage, int page) {
+        List<WiseSaying> sortedWiseSayings = findAll().stream()
+                .sorted(Comparator.comparing(WiseSaying::getId).reversed())
+                .toList();
+
+        return pageOf(sortedWiseSayings, itemsPerPage, page);
     }
 
     List<WiseSaying> findAll() {
@@ -59,9 +83,15 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
 
     }
 
-    public Page findAll(int itemsPerPage) {
-        List<WiseSaying> wiseSayings = findAll();
-        return new Page(wiseSayings, wiseSayings.size(), itemsPerPage);
+    private Page<WiseSaying> pageOf(List<WiseSaying> wiseSayings, int itemsPerPage, int page) {
+        int totalItems = wiseSayings.size();
+
+        List<WiseSaying> pageContent = wiseSayings.stream()
+                .skip((long) (page - 1) * itemsPerPage)
+                .limit(itemsPerPage)
+                .toList();
+
+        return new Page<>(pageContent, totalItems, itemsPerPage, page);
     }
 
     public boolean deleteById(int id) {
@@ -72,7 +102,7 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
         String path = getFilePath(id);
         Map<String, Object> map = Util.Json.readAsMap(path);
 
-        if(map.isEmpty()) {
+        if (map.isEmpty()) {
             return Optional.empty();
         }
 
@@ -80,15 +110,17 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
 
     }
 
-    static String getFilePath(int id) {
+    public static String getFilePath(int id) {
         return DB_PATH + "/" + id + ".json";
     }
 
     public int getLastId() {
-        String idStr = Util.File.readAsString(ID_File_Path);
+        String idStr = Util.File.readAsString(ID_FILE_PATH);
+
         if (idStr.isEmpty()) {
             return 0;
         }
+
         try {
             return Integer.parseInt(idStr);
         } catch (NumberFormatException e) {
@@ -97,33 +129,32 @@ public class WiseSayingFileRepository implements WiseSayingRepository {
     }
 
     public void setLastId(int id) {
-        Util.File.write(ID_File_Path, id);
+        Util.File.write(ID_FILE_PATH, id);
     }
 
     public void build() {
 
         List<Map<String, Object>> mapList = findAll().stream()
-                    .map(WiseSaying::toMap)
-                    .toList();
+                .map(WiseSaying::toMap)
+                .toList();
 
         String jsonStr = Util.Json.listToJson(mapList);
-        Util.File.write(BUILD_Path, jsonStr);
+        Util.File.write(BUILD_PATH, jsonStr);
     }
 
     @Override
     public void makeSampleData(int cnt) {
-        for(int i = 1; i <= cnt; i++) {
+        for (int i = 1; i <= cnt; i++) {
             WiseSaying wiseSaying = new WiseSaying("명언" + i, "작가" + i);
             save(wiseSaying);
         }
     }
 
-
     public static String getBuildPath() {
-        return BUILD_Path;
+        return BUILD_PATH;
     }
 
-    public int count()  {
+    public int count() {
         return findAll().size();
     }
 }

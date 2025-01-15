@@ -9,18 +9,18 @@ import java.util.Scanner;
 public class WiseSayingController {
     private final Scanner sc;
     private WiseSayingService wiseSayingService;
-    private int itemPerPage;
+    private int itemsPerPage;
 
     public WiseSayingController(Scanner sc) {
         this.sc = sc;
-        itemPerPage = 5;
+        itemsPerPage = 5;
         wiseSayingService = new WiseSayingService();
     }
 
     public void actionWrite() {
-        System.out.print("명언: ");
+        System.out.print("명언 : ");
         String content = sc.nextLine();
-        System.out.print("작가: ");
+        System.out.print("작가 : ");
         String author = sc.nextLine();
 
         WiseSaying wiseSaying = wiseSayingService.write(content, author);
@@ -28,40 +28,52 @@ public class WiseSayingController {
     }
 
     public void actionPrint(Command command) {
-        System.out.println("번호 / 작가 / 명언");
-        System.out.println("----------------------");
 
-        //목록?page=1
         int page = command.getParamAsInt("page", 1);
+        Page<WiseSaying> pageContent;
 
-
-        List<WiseSaying> wiseSayingList;
-
-        Page pageContent = wiseSayingService.getAllItems(itemPerPage);
-
-        //검색명령어가 포함됐는지 확인
         if(command.isSearchCommand()) {
 
             String ktype = command.getParam("keywordType");
             String kw = command.getParam("keyword");
 
-            wiseSayingList = wiseSayingService.search(ktype, kw, itemPerPage);
-        } else {
-            wiseSayingList = pageContent.getWiseSayings();
+            pageContent = wiseSayingService.search(ktype, kw, itemsPerPage, page);
 
+
+        } else {
+            pageContent = wiseSayingService.getAllItems(itemsPerPage, page);
         }
 
+        printWiseSayings(pageContent, command);
+    }
 
-        if(wiseSayingList.isEmpty()) {
+    private void printWiseSayings(Page<WiseSaying> pageContent, Command cmd) {
+
+        if(pageContent.getContent().isEmpty()) {
             System.out.println("등록된 명언이 없습니다.");
             return;
         }
 
-        wiseSayingList.reversed().forEach(w -> {
+        if(cmd.isSearchCommand()) {
+
+            String kwtype = cmd.getParam("keywordType");
+            String kw = cmd.getParam("keyword");
+
+            System.out.println("----------------------");
+            System.out.println("검색타입 : %s".formatted(kwtype));
+            System.out.println("검색어 : %s".formatted(kw));
+            System.out.println("----------------------");
+
+        }
+
+        System.out.println("번호 / 작가 / 명언");
+        System.out.println("----------------------");
+
+        pageContent.getContent().forEach(w -> {
             System.out.printf("%d / %s / %s\n", w.getId(), w.getAuthor(), w.getContent());
         });
 
-        printPage(page, pageContent.getTotalPages());
+        printPage(pageContent.getPage(), pageContent.getTotalPages());
     }
 
     private void printPage(int page, int totalPages) {
